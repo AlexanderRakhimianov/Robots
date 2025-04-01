@@ -5,7 +5,6 @@ import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 
 import javax.swing.JDesktopPane;
-import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -16,20 +15,13 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import log.Logger;
 
-/**
- * СДЕЛАНО
- * Что требуется сделать:
- * 1. Метод создания меню перегружен функционалом и трудно читается. 
- * Следует разделить его на серию более простых методов (или вообще выделить отдельный класс).
- *
- */
-public class MainApplicationFrame extends JFrame
+
+public class MainApplicationFrame extends BaseFrame
 {
     private final JDesktopPane desktopPane = new JDesktopPane();
-    
+
     public MainApplicationFrame() {
-        //Make the big window be indented 50 pixels from each edge
-        //of the screen.
+        super("Robots");
         int inset = 50;        
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setBounds(inset, inset,
@@ -37,8 +29,7 @@ public class MainApplicationFrame extends JFrame
             screenSize.height - inset*2);
 
         setContentPane(desktopPane);
-        
-        
+
         LogWindow logWindow = createLogWindow();
         addWindow(logWindow);
 
@@ -47,7 +38,6 @@ public class MainApplicationFrame extends JFrame
         addWindow(gameWindow);
 
         setJMenuBar(generateMenuBar());
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
     
     protected LogWindow createLogWindow()
@@ -114,8 +104,14 @@ public class MainApplicationFrame extends JFrame
         JMenuItem addLogMessageItem = createAddLogMessageItem();
         testMenu.add(addLogMessageItem);
 
+        JMenu MainRobotsMenu = createJMenu("RobotsProgram", "Основное меню приложения", KeyEvent.VK_E);
+        JMenuItem exitItem = createExitItem();
+        MainRobotsMenu.add(exitItem);
+
+        menuBar.add(MainRobotsMenu);
         menuBar.add(lookAndFeelMenu);
         menuBar.add(testMenu);
+
         return menuBar;
     }
 
@@ -143,6 +139,7 @@ public class MainApplicationFrame extends JFrame
         });
         return crossplatformLookAndFeel;
     }
+
     private JMenuItem createAddLogMessageItem() {
         JMenuItem addLogMessageItem = new JMenuItem("Сообщение в лог", KeyEvent.VK_S);
         addLogMessageItem.addActionListener((event) -> {
@@ -151,6 +148,13 @@ public class MainApplicationFrame extends JFrame
         return addLogMessageItem;
     }
 
+    private JMenuItem createExitItem() {
+        JMenuItem ExitItem = new JMenuItem("Выйти", KeyEvent.VK_S);
+        ExitItem.addActionListener((event) -> {
+            exitApplication();
+        });
+        return ExitItem;
+    }
     
     private void setLookAndFeel(String className)
     {
@@ -160,9 +164,12 @@ public class MainApplicationFrame extends JFrame
             SwingUtilities.updateComponentTreeUI(this);
         }
         catch (ClassNotFoundException | InstantiationException
-            | IllegalAccessException | UnsupportedLookAndFeelException e)
-        {
-            // just ignore
+            | IllegalAccessException | UnsupportedLookAndFeelException e) {}
+    }
+
+    public void exitApplication() {
+        if (confirmClose()) {
+            System.exit(0);
         }
     }
 }
