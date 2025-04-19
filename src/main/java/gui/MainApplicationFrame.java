@@ -22,11 +22,7 @@ public class MainApplicationFrame extends BaseFrame
 
     public MainApplicationFrame() {
         super("Robots");
-        int inset = 50;        
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        setBounds(inset, inset,
-            screenSize.width  - inset*2,
-            screenSize.height - inset*2);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); // ?
 
         setContentPane(desktopPane);
 
@@ -34,7 +30,8 @@ public class MainApplicationFrame extends BaseFrame
         addWindow(logWindow);
 
         GameWindow gameWindow = new GameWindow();
-        gameWindow.setSize(400,  400);
+
+        gameWindow.setSize(screenSize.width, screenSize.height - 160);
         addWindow(gameWindow);
 
         setJMenuBar(generateMenuBar());

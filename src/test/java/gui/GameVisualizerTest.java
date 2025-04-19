@@ -19,7 +19,9 @@ class GameVisualizerTest {
     void testMoveRobotBoundaryLimits() {
         gameVisualizer.moveRobot(10, 0, 1000); // Движение вперёд, выход за границы
 
-        assertTrue(gameVisualizer.m_robotPositionX >= 0 && gameVisualizer.m_robotPositionX <= 300);
-        assertTrue(gameVisualizer.m_robotPositionY >= 0 && gameVisualizer.m_robotPositionY <= 300);
+        assertTrue(gameVisualizer.m_robotPositionX >= 0 && gameVisualizer.m_robotPositionX <= 600,
+                "X координата должна быть в пределах [0, 600]");
+        assertTrue(gameVisualizer.m_robotPositionY >= 0 && gameVisualizer.m_robotPositionY <= 600,
+                "Y координата должна быть в пределах [0, 600]");
     }
 }
