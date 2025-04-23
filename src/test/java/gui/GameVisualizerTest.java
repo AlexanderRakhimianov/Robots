@@ -17,11 +17,11 @@ class GameVisualizerTest {
 
     @Test
     void testMoveRobotBoundaryLimits() {
-        gameVisualizer.moveRobot(10, 0, 1000); // Движение вперёд, выход за границы
+        gameVisualizer.robot.move(10, 0, 1000); // Движение вперёд, выход за границы
 
-        assertTrue(gameVisualizer.m_robotPositionX >= 0 && gameVisualizer.m_robotPositionX <= 600,
+        assertTrue(gameVisualizer.robot.positionX >= 0 && gameVisualizer.robot.positionX <= 600,
                 "X координата должна быть в пределах [0, 600]");
-        assertTrue(gameVisualizer.m_robotPositionY >= 0 && gameVisualizer.m_robotPositionY <= 600,
+        assertTrue(gameVisualizer.robot.positionY >= 0 && gameVisualizer.robot.positionY <= 600,
                 "Y координата должна быть в пределах [0, 600]");
     }
 }

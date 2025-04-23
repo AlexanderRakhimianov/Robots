@@ -2,21 +2,12 @@ package gui;
 
 import java.awt.*;
 
-public class Enemy {
-    private static final double ENEMY_MAX_VELOCITY = 0.18;
-    private static final double ENEMY_MAX_ANGULAR_VELOCITY = 0.0018;
+public class Enemy extends BaseRobot {
 
-    volatile double positionX;
-    volatile double positionY;
-    volatile double direction;
-    private final Color color;
-
-    public Enemy(double startX, double startY, Color color) {
-        this.positionX = startX;
-        this.positionY = startY;
-        this.direction = 0;
-        this.color = color;
+    public Enemy(double startX, double startY) {
+        super(startX, startY, Color.BLUE, 0.3, 0.003);
     }
+
     public Color getColor() { return color; }
 
     public void moveTowards(double targetX, double targetY, double duration, Dimension size) {
@@ -25,24 +16,24 @@ public class Enemy {
             return; // Достигли цели
         }
 
-        double velocity = ENEMY_MAX_VELOCITY;
+        double velocity = maxVelocity;
         double angleToTarget = angleTo(positionX, positionY, targetX, targetY);
         double angularVelocity = 0;
 
         if (angleToTarget > direction) {
-            angularVelocity = ENEMY_MAX_ANGULAR_VELOCITY;
+            angularVelocity = maxAngularVelocity;
         }
         if (angleToTarget < direction) {
-            angularVelocity = -ENEMY_MAX_ANGULAR_VELOCITY;
+            angularVelocity = -maxAngularVelocity;
         }
 
         updatePosition(velocity, angularVelocity, duration, size);
     }
 
     void updatePosition(double velocity, double angularVelocity, double duration, Dimension size) {
-        velocity = Math.max(-ENEMY_MAX_VELOCITY, Math.min(velocity, ENEMY_MAX_VELOCITY));
-        angularVelocity = Math.max(-ENEMY_MAX_ANGULAR_VELOCITY,
-                Math.min(angularVelocity, ENEMY_MAX_ANGULAR_VELOCITY));
+        velocity = Math.max(-maxVelocity, Math.min(velocity, maxVelocity));
+        angularVelocity = Math.max(-maxAngularVelocity,
+                Math.min(angularVelocity, maxAngularVelocity));
 
         double newX = positionX + velocity * duration * Math.cos(direction);
         double newY = positionY + velocity * duration * Math.sin(direction);

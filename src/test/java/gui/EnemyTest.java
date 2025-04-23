@@ -12,7 +12,7 @@ class EnemyTest {
 
     @BeforeEach
     void setUp() {
-        enemy = new Enemy(100, 100, Color.BLUE);
+        enemy = new Enemy(100, 100);
         fieldSize = new Dimension(800, 600);
     }
 

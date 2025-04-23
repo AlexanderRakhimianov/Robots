@@ -6,56 +6,50 @@ import java.awt.event.KeyEvent;
 import static org.junit.jupiter.api.Assertions.*;
 
 class KeyboardTest {
-    private GameVisualizer gameVisualizer;
+    private Robot robot;
 
     @BeforeEach
     void setUp() {
-        gameVisualizer = new GameVisualizer();
-        gameVisualizer.setSize(800, 600);
-    }
-
-    private KeyEvent createKeyEvent(int keyCode) {
-        return new KeyEvent(gameVisualizer, KeyEvent.KEY_PRESSED,
-                System.currentTimeMillis(), 0, keyCode, (char)keyCode);
+        robot = new Robot(new GameVisualizer());
     }
 
     @Test
     void testKeyPressSetsFlagsCorrectly() {
         // Симулируем нажатие клавиш через handleKeyPress
-        gameVisualizer.handleKeyPress(KeyEvent.VK_W, true);
-        assertTrue(gameVisualizer.isWPressed());
+        robot.handleKeyPress(KeyEvent.VK_W, true);
+        assertTrue(robot.wPressed);
 
-        gameVisualizer.handleKeyPress(KeyEvent.VK_A, true);
-        assertTrue(gameVisualizer.isAPressed());
+        robot.handleKeyPress(KeyEvent.VK_A, true);
+        assertTrue(robot.aPressed);
 
-        gameVisualizer.handleKeyPress(KeyEvent.VK_S, true);
-        assertTrue(gameVisualizer.isSPressed());
+        robot.handleKeyPress(KeyEvent.VK_S, true);
+        assertTrue(robot.sPressed);
 
-        gameVisualizer.handleKeyPress(KeyEvent.VK_D, true);
-        assertTrue(gameVisualizer.isDPressed());
+        robot.handleKeyPress(KeyEvent.VK_D, true);
+        assertTrue(robot.dPressed);
     }
 
     @Test
     void testKeyReleaseResetsFlags() {
-        gameVisualizer.handleKeyPress(KeyEvent.VK_W, true);
-        gameVisualizer.handleKeyPress(KeyEvent.VK_W, false);
-        assertFalse(gameVisualizer.isWPressed());
+        robot.handleKeyPress(KeyEvent.VK_W, true);
+        robot.handleKeyPress(KeyEvent.VK_W, false);
+        assertFalse(robot.wPressed);
     }
 
     @Test
     void testRobotMovesForwardWhenWPressed() {
-        double initialX = gameVisualizer.getRobotPositionX();
-        double initialY = gameVisualizer.getRobotPositionY();
+        double initialX = robot.positionX;
+        double initialY = robot.positionY;;
 
-        gameVisualizer.m_robotDirection = Math.PI/4;
+        robot.direction = Math.PI/4;
 
-        gameVisualizer.handleKeyPress(KeyEvent.VK_W, true);
+        robot.handleKeyPress(KeyEvent.VK_W, true);
         for (int i = 0; i < 10; i++) {
-            gameVisualizer.handleKeyboardControl();
+            robot.handleKeyboardControl();
         }
-        assertNotEquals(initialX, gameVisualizer.getRobotPositionX(),
+        assertNotEquals(initialX, robot.positionX,
                 "Robot X position should change when moving forward");
-        assertNotEquals(initialY, gameVisualizer.getRobotPositionY(),
+        assertNotEquals(initialY, robot.positionY,
                 "Robot Y position should change when moving forward");
     }
 }
