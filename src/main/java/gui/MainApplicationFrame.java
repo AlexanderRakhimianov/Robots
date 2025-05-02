@@ -3,88 +3,147 @@ package gui;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
+import java.beans.PropertyVetoException;
+import java.io.*;
 
-import javax.swing.JDesktopPane;
-import javax.swing.JInternalFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.*;
 
 import log.Logger;
 
 
-public class MainApplicationFrame extends BaseFrame
-{
+public class MainApplicationFrame extends BaseFrame {
+    private static String PROFILE_FILE = System.getProperty("user.home") + "/robots_window_profile.dat";
     private final JDesktopPane desktopPane = new JDesktopPane();
 
     public MainApplicationFrame() {
         super("Robots");
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); // ?
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
         setContentPane(desktopPane);
 
-        LogWindow logWindow = createLogWindow();
-        addWindow(logWindow);
+        WindowProfile profile = loadProfile();
 
-        GameWindow gameWindow = new GameWindow();
+        if (shouldCreateWindow(profile, "LogWindow")) {
+            LogWindow logWindow = createLogWindow();
+            addWindow(logWindow);
+        }
 
-        gameWindow.setSize(screenSize.width, screenSize.height - 160);
-        addWindow(gameWindow);
+        if (shouldCreateWindow(profile, "GameWindow")) {
+            GameWindow gameWindow = new GameWindow();
+            gameWindow.setSize(screenSize.width, screenSize.height - 160);
+            addWindow(gameWindow);
+        }
 
         setJMenuBar(generateMenuBar());
+
+        restoreWindowProfile(profile);
     }
-    
-    protected LogWindow createLogWindow()
-    {
+
+    protected JDesktopPane getDesktopPane() {
+        return desktopPane;
+    }
+
+    protected String getProfileFilePath() {
+        return PROFILE_FILE;
+    }
+
+    public static void setProfileFilePath(String path) {
+        PROFILE_FILE = path;
+    }
+
+    protected WindowProfile loadProfile() {
+        File profileFile = new File(getProfileFilePath());
+        if (!profileFile.exists()) return null;
+
+        int response = JOptionPane.showConfirmDialog(
+                this,
+                "Обнаружен сохранённый профиль окон. Восстановить?",
+                "Восстановление профиля",
+                JOptionPane.YES_NO_OPTION
+        );
+
+        if (response != JOptionPane.YES_OPTION) return null;
+
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(PROFILE_FILE))) {
+            return (WindowProfile) ois.readObject();
+        } catch (Exception e) {
+            Logger.debug("Ошибка загрузки профиля: " + e.getMessage());
+            return null;
+        }
+    }
+
+    protected boolean shouldCreateWindow(WindowProfile profile, String windowType) {
+        if (profile == null) return true;
+
+        for (WindowState state : profile.getWindowStates()) {
+            if (state.getWindowType().equals(windowType)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected void restoreWindowProfile(WindowProfile profile) {
+        if (profile == null) return;
+
+        for (WindowState state : profile.getWindowStates()) {
+            for (JInternalFrame frame : desktopPane.getAllFrames()) {
+                if (frame.getClass().getSimpleName().equals(state.getWindowType())) {
+                    frame.setLocation(state.getX(), state.getY());
+                    frame.setSize(state.getWidth(), state.getHeight());
+                    frame.setVisible(state.isVisible());
+                    try {
+                        frame.setIcon(state.isIconified());
+                    }
+                    catch (PropertyVetoException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    protected void saveWindowProfile() {
+        WindowProfile profile = new WindowProfile();
+
+        for (JInternalFrame frame : desktopPane.getAllFrames()) {
+            WindowState state = new WindowState(
+                    frame.getClass().getSimpleName(),
+                    frame.getX(),
+                    frame.getY(),
+                    frame.getWidth(),
+                    frame.getHeight(),
+                    frame.isVisible(),
+                    frame.isIcon()
+            );
+            profile.addWindowState(state);
+        }
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(PROFILE_FILE))) {
+            oos.writeObject(profile);
+            System.out.println("Профиль сохранён");
+        } catch (IOException e) {
+            System.out.println("Не удалось сохранить профиль окон: " + e.getMessage());
+        }
+    }
+
+    protected LogWindow createLogWindow() {
         LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource());
-        logWindow.setLocation(10,10);
+        logWindow.setLocation(10, 10);
         logWindow.setSize(300, 800);
         setMinimumSize(logWindow.getSize());
         logWindow.pack();
         Logger.debug("Протокол работает");
         return logWindow;
     }
-    
-    protected void addWindow(JInternalFrame frame)
-    {
+
+    protected void addWindow(JInternalFrame frame) {
         desktopPane.add(frame);
         frame.setVisible(true);
     }
-    
-//    protected JMenuBar createMenuBar() {
-//        JMenuBar menuBar = new JMenuBar();
-// 
-//        //Set up the lone menu.
-//        JMenu menu = new JMenu("Document");
-//        menu.setMnemonic(KeyEvent.VK_D);
-//        menuBar.add(menu);
-// 
-//        //Set up the first menu item.
-//        JMenuItem menuItem = new JMenuItem("New");
-//        menuItem.setMnemonic(KeyEvent.VK_N);
-//        menuItem.setAccelerator(KeyStroke.getKeyStroke(
-//                KeyEvent.VK_N, ActionEvent.ALT_MASK));
-//        menuItem.setActionCommand("new");
-////        menuItem.addActionListener(this);
-//        menu.add(menuItem);
-// 
-//        //Set up the second menu item.
-//        menuItem = new JMenuItem("Quit");
-//        menuItem.setMnemonic(KeyEvent.VK_Q);
-//        menuItem.setAccelerator(KeyStroke.getKeyStroke(
-//                KeyEvent.VK_Q, ActionEvent.ALT_MASK));
-//        menuItem.setActionCommand("quit");
-////        menuItem.addActionListener(this);
-//        menu.add(menuItem);
-// 
-//        return menuBar;
-//    }
-    
-    private JMenuBar generateMenuBar()
-    {
+
+    private JMenuBar generateMenuBar() {
         JMenuBar menuBar = new JMenuBar();
 
         JMenu lookAndFeelMenu = createJMenu("Режим отображения",
@@ -148,25 +207,17 @@ public class MainApplicationFrame extends BaseFrame
     private JMenuItem createExitItem() {
         JMenuItem ExitItem = new JMenuItem("Выйти", KeyEvent.VK_S);
         ExitItem.addActionListener((event) -> {
-            exitApplication();
+            dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
         });
         return ExitItem;
     }
-    
-    private void setLookAndFeel(String className)
-    {
-        try
-        {
+
+    private void setLookAndFeel(String className) {
+        try {
             UIManager.setLookAndFeel(className);
             SwingUtilities.updateComponentTreeUI(this);
-        }
-        catch (ClassNotFoundException | InstantiationException
-            | IllegalAccessException | UnsupportedLookAndFeelException e) {}
-    }
-
-    public void exitApplication() {
-        if (confirmClose()) {
-            System.exit(0);
+        } catch (ClassNotFoundException | InstantiationException
+                 | IllegalAccessException | UnsupportedLookAndFeelException e) {
         }
     }
 }

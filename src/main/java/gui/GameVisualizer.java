@@ -45,8 +45,8 @@ public class GameVisualizer extends JPanel {
     }
 
     private void initializeEnemies() {
-        int width = getWidth() * 2;
-        int height = getHeight() * 2;
+        int width = Math.max(getWidth(), 1728) * 2;
+        int height = Math.max(getHeight(), 957) * 2;
 
         enemies.clear();
         enemies.add(new Enemy(width * 0.2, height * 0.2));

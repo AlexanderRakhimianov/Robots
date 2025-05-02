@@ -14,6 +14,8 @@ public abstract class BaseFrame extends JFrame {
         initializeClosingBehaviorForFrame();
     }
 
+    protected abstract void saveWindowProfile();
+
     // поведение закрытия для JFrame
     private void initializeClosingBehaviorForFrame() {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -21,6 +23,7 @@ public abstract class BaseFrame extends JFrame {
             @Override
             public void windowClosing(WindowEvent e) {
                 if (confirmClose()) {
+                    saveWindowProfile();
                     System.exit(0);
                 }
             }
