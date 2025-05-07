@@ -92,13 +92,14 @@ public class MainApplicationFrame extends BaseFrame {
                 if (frame.getClass().getSimpleName().equals(state.getWindowType())) {
                     frame.setLocation(state.getX(), state.getY());
                     frame.setSize(state.getWidth(), state.getHeight());
-                    frame.setVisible(state.isVisible());
                     try {
                         frame.setIcon(state.isIconified());
+                        frame.setMaximum(state.isMaximized());
                     }
                     catch (PropertyVetoException ex) {
                         throw new RuntimeException(ex);
                     }
+                    frame.setVisible(state.isVisible());
                     break;
                 }
             }
@@ -108,15 +109,17 @@ public class MainApplicationFrame extends BaseFrame {
     protected void saveWindowProfile() {
         WindowProfile profile = new WindowProfile();
 
-        for (JInternalFrame frame : desktopPane.getAllFrames()) {
+        for (JInternalFrame j_frame : desktopPane.getAllFrames()) {
+            BaseInternalFrame frame = (BaseInternalFrame) j_frame;
             WindowState state = new WindowState(
                     frame.getClass().getSimpleName(),
-                    frame.getX(),
-                    frame.getY(),
-                    frame.getWidth(),
-                    frame.getHeight(),
+                    frame.getNormalX(),
+                    frame.getNormalY(),
+                    frame.getNormalWidth(),
+                    frame.getNormalHeight(),
                     frame.isVisible(),
-                    frame.isIcon()
+                    frame.isIcon(),
+                    frame.isMaximum()
             );
             profile.addWindowState(state);
         }

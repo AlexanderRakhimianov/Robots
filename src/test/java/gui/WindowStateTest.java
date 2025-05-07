@@ -9,7 +9,7 @@ public class WindowStateTest {
     @Test
     void testSerialization() throws IOException, ClassNotFoundException {
         // Подготовка
-        WindowState original = new WindowState("TestWindow", 100, 200, 300, 400, true, false);
+        WindowState original = new WindowState("TestWindow", 100, 200, 300, 400, true, false, false);
 
         // Сериализация
         ByteArrayOutputStream bos = new ByteArrayOutputStream();

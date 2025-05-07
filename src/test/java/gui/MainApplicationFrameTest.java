@@ -64,7 +64,7 @@ class MainApplicationFrameTest {
     @Test
     void testShouldCreateWindowWhenWindowTypeExists() {
         WindowProfile profile = new WindowProfile();
-        profile.addWindowState(new WindowState("LogWindow", 0, 0, 100, 100, true, false));
+        profile.addWindowState(new WindowState("LogWindow", 0, 0, 100, 100, true, false, false));
 
         MainApplicationFrame frame = mock(MainApplicationFrame.class, CALLS_REAL_METHODS);
 
@@ -75,7 +75,7 @@ class MainApplicationFrameTest {
     @Test
     void testShouldCreateWindowWhenWindowTypeNotExists() {
         WindowProfile profile = new WindowProfile();
-        profile.addWindowState(new WindowState("GameWindow", 0, 0, 100, 100, true, false));
+        profile.addWindowState(new WindowState("GameWindow", 0, 0, 100, 100, true, false, false));
 
         MainApplicationFrame frame = mock(MainApplicationFrame.class, CALLS_REAL_METHODS);
 
@@ -101,8 +101,8 @@ class MainApplicationFrameTest {
     @Test
     void testRestoreWindowProfileWithValidProfile() {
         WindowProfile profile = new WindowProfile();
-        profile.addWindowState(new WindowState("LogWindow", 100, 200, 300, 400, true, false));
-        profile.addWindowState(new WindowState("GameWindow", 50, 60, 700, 800, false, true));
+        profile.addWindowState(new WindowState("LogWindow", 100, 200, 300, 400, true, false, false));
+        profile.addWindowState(new WindowState("GameWindow", 50, 60, 700, 800, false, true, false));
 
         MainApplicationFrame frame = new MainApplicationFrame();
         frame.setVisible(true);

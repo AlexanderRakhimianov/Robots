@@ -10,8 +10,8 @@ public class WindowProfileTest {
     @Test
     void testAddAndGetWindowStates() {
         WindowProfile profile = new WindowProfile();
-        WindowState state1 = new WindowState("LogWindow", 10, 20, 300, 400, true, false);
-        WindowState state2 = new WindowState("GameWindow", 50, 60, 500, 600, true, true);
+        WindowState state1 = new WindowState("LogWindow", 10, 20, 300, 400, true, false, false);
+        WindowState state2 = new WindowState("GameWindow", 50, 60, 500, 600, true, true, false);
 
         profile.addWindowState(state1);
         profile.addWindowState(state2);

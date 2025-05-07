@@ -6,9 +6,9 @@ class WindowState implements Serializable {
     private static final long serialVersionUID = 1L;
     private final String windowType;
     private final int x, y, width, height;
-    private final boolean isVisible, isIconified;
+    private final boolean isVisible, isIconified, isMaximized;
 
-    public WindowState(String windowType, int x, int y, int width, int height, boolean isVisible, boolean isIconified) {
+    public WindowState(String windowType, int x, int y, int width, int height, boolean isVisible, boolean isIconified, boolean isMaximized) {
         this.windowType = windowType;
         this.x = x;
         this.y = y;
@@ -16,6 +16,7 @@ class WindowState implements Serializable {
         this.height = height;
         this.isVisible = isVisible;
         this.isIconified = isIconified;
+        this.isMaximized = isMaximized;
     }
 
     public String getWindowType() { return windowType; }
@@ -25,4 +26,5 @@ class WindowState implements Serializable {
     public int getHeight() { return height; }
     public boolean isVisible() { return isVisible; }
     public boolean isIconified() { return isIconified; }
+    public boolean isMaximized() { return isMaximized; }
 }
