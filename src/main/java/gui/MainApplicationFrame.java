@@ -93,8 +93,8 @@ public class MainApplicationFrame extends BaseFrame {
                     frame.setLocation(state.getX(), state.getY());
                     frame.setSize(state.getWidth(), state.getHeight());
                     try {
-                        frame.setIcon(state.isIconified());
                         frame.setMaximum(state.isMaximized());
+                        frame.setIcon(state.isIconified());
                     }
                     catch (PropertyVetoException ex) {
                         throw new RuntimeException(ex);
